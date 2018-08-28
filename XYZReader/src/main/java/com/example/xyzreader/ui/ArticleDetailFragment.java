@@ -2,6 +2,7 @@ package com.example.xyzreader.ui;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -20,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -60,6 +62,9 @@ public class ArticleDetailFragment extends Fragment implements
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
+
+    private ArticleFetchTask mTask;
+    private ProgressDialog mDialog;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -152,6 +157,7 @@ public class ArticleDetailFragment extends Fragment implements
 
         bindViews();
         updateStatusBar();
+
         return mRootView;
     }
 
@@ -232,7 +238,8 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            startArticleFetch();
+            //bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
@@ -280,9 +287,10 @@ public class ArticleDetailFragment extends Fragment implements
             Log.e(TAG, "Error reading item detail cursor");
             mCursor.close();
             mCursor = null;
-        }
 
-        bindViews();
+        } else {
+            bindViews();
+        }
     }
 
     @Override
@@ -300,5 +308,58 @@ public class ArticleDetailFragment extends Fragment implements
         return mIsCard
                 ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
                 : mPhotoView.getHeight() - mScrollY;
+    }
+
+    // async task
+    protected void startArticleFetch() {
+        if (null != mCursor) {
+            mTask = new ArticleFetchTask(this, mCursor);
+            mTask.execute();
+        }
+    }
+
+    /*
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        // Sync UI state to current fragment and task state
+        if(isTaskRunning(mTask)) {
+            showProgressBar();
+        }else {
+            hideProgressBar();
+        }
+        super.onActivityCreated(savedInstanceState);
+    }
+    */
+
+    public void showProgressBar() {
+        mDialog = new ProgressDialog(getActivity());
+        mDialog.setMessage("Loading..");
+        mDialog.setTitle("Get Data");
+        mDialog.setIndeterminate(false);
+        mDialog.setCancelable(true);
+        mDialog.show();
+    }
+
+    public void hideProgressBar() {
+        mDialog.dismiss();
+    }
+
+    public void populateResult(String s) {
+        if (null != s) {
+            TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+            bodyView.setText(s);
+        } else {
+            Log.d(TAG, "get body text failure");
+        }
+    }
+
+    protected boolean isTaskRunning(ArticleFetchTask task) {
+        if(task==null ) {
+            return false;
+        } else if(task.getStatus() == ArticleFetchTask.Status.FINISHED){
+            return false;
+        } else {
+            return true;
+        }
     }
 }

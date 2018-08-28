@@ -31,7 +31,8 @@
                 <ImageView
                     android:id="@+id/photo"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/detail_photo_height" />
+                    android:layout_height="@dimen/detail_photo_height"
+                    android:contentDescription="image" />
 
             </FrameLayout>
 
