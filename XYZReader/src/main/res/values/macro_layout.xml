@@ -1,4 +1,13 @@
 <resources>
+
+    <!-- detail image button-->
+    <dimen name="detail_imagebtn_width">56dp</dimen>
+
+    <!-- cardview -->
+    <dimen name="cardview_side_margin">4dp</dimen>
+    <dimen name="cardview_text_padding">4dp</dimen>
+    <dimen name="cardview_image_height">100dp</dimen>
+
     <!-- list -->
     <dimen name="list_bottom_margin">28dp</dimen>
     <dimen name="list_top_margin">116dp</dimen>
