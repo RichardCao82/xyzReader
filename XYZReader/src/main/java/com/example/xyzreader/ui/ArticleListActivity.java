@@ -57,15 +57,16 @@ public class ArticleListActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_article_list);
 
         //final View toolbarContainerView = findViewById(R.id.toolbar_container);
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        mRecyclerView = findViewById(R.id.recycler_view);
 
         setSupportActionBar(mToolbar);
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         } catch (Exception e) {
-            Log.d(TAG, "hide toolbar title failure");}
+            Log.d(TAG, "hide toolbar title failure");
+        }
         // This class was deprecated in API level 28
         getLoaderManager().initLoader(0, null, this);
 
@@ -228,9 +229,9 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         ViewHolder(View view) {
             super(view);
-            thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
-            titleView = (TextView) view.findViewById(R.id.article_title);
-            subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
+            thumbnailView = view.findViewById(R.id.thumbnail);
+            titleView = view.findViewById(R.id.article_title);
+            subtitleView = view.findViewById(R.id.article_subtitle);
         }
     }
 }
